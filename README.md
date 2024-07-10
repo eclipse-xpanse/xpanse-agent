@@ -36,3 +36,9 @@ Flags:
 
 Use "xpanse-agent [command] --help" for more information about a command.
 ```
+
+## Environment Variables
+
+All arguments can also be read from environment variables. 
+Variables in environment variables must be all in uppercase and 
+must be prefixed with `XPANSE_AGENT_`.
