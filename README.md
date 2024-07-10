@@ -9,7 +9,7 @@ xpanse agent to poll and execute config change requests.
 make build
 ```
 
-### Start the xpanse-agent
+### Run xpanse-agent
 
 ```shell
 ./xpanse-agent -h
