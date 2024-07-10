@@ -9,7 +9,7 @@ xpanse agent to poll and execute config change requests.
 make build
 ```
 
-### Start the xpanse-agent
+### Run xpanse-agent
 
 ```shell
 ./xpanse-agent -h
@@ -36,3 +36,9 @@ Flags:
 
 Use "xpanse-agent [command] --help" for more information about a command.
 ```
+
+## Environment Variables
+
+All arguments can also be read from environment variables. 
+Variables in environment variables must be all in uppercase and 
+must be prefixed with `XPANSE_AGENT_`.
