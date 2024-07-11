@@ -3,7 +3,7 @@ module xpanse-agent
 go 1.22.5
 
 require (
-	github.com/go-co-op/gocron/v2 v2.8.0
+	github.com/go-co-op/gocron/v2 v2.9.0
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.19.0
