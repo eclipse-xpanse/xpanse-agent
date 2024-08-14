@@ -5,9 +5,11 @@
 
 package commands
 
-var (
-	ServiceIdArgument        = "serviceId"
-	JobFrequencyArgument     = "jobFrequency"
-	CommandArgument          = "command"
-	CommandArgumentsArgument = "arguments"
+const (
+	serviceIdArgument          = "serviceId"
+	jobFrequencyArgument       = "jobFrequency"
+	resourceNameArgument       = "resourceName"
+	xpanseApiEndpointArgument  = "xpanseApiEndpoint"
+	configFileLocationArgument = "configFile"
+	repoCheckoutFolderArgument = "RepoCheckoutFolder"
 )

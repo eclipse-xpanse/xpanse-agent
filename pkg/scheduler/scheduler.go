@@ -14,19 +14,19 @@ import (
 	"xpanse-agent/pkg/logger"
 )
 
-func StartPolling(command string, jobFrequency int, arguments string, serviceId string) {
+func StartPolling(serviceId string, resourceName string, jobFrequency int) {
 	scheduler, err := gocron.NewScheduler()
 	if err != nil {
 		os.Exit(1)
 	}
 	_, err = scheduler.NewJob(gocron.DurationJob(time.Duration(jobFrequency)*time.Second),
-		gocron.NewTask(executor.ExecuteCommand, command, arguments),
+		gocron.NewTask(executor.ExecuteCommand, "docker", "ps"), // to be changed to poll xpanse API.
 		gocron.WithSingletonMode(gocron.LimitMode(1)))
 
 	if err != nil {
 		return
 	}
-	logger.Logger.Info(fmt.Sprintf("xpanse-agent started for serviceId %s", serviceId))
+	logger.Logger.Info(fmt.Sprintf("scheduler started for serviceId %s and resourceName %s", serviceId, resourceName))
 
 	scheduler.Start()
 

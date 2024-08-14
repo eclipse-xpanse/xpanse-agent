@@ -22,6 +22,13 @@ jobs:
         with:
           go-version: ">=1.22"
       - run: go version
+      - name: Format code
+        run: |
+          find . -name "*.go" | xargs gofmt -s -l
+          if [ $? -ne 0 ]; then
+            echo "Code formatting errors found"
+            exit 1
+          fi
       - name: Build
         run: make build
       - name: Vet
