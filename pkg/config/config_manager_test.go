@@ -19,7 +19,7 @@ func TestDefaultValues(t *testing.T) {
 	assert.Equal(t, "/tmp", LoadedConfig.RepoCheckoutLocation)
 	assert.Equal(t, 30, LoadedConfig.PollingFrequency)
 	assert.Equal(t, "test_value", LoadedConfig.ServiceId)
-	assert.Equal(t, "", LoadedConfig.xpanseApiEndpoint)
+	assert.Equal(t, "", LoadedConfig.XpanseApiEndpoint)
 }
 
 func TestConfigFromFile(t *testing.T) {
