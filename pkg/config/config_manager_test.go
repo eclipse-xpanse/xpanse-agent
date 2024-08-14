@@ -25,7 +25,7 @@ func TestDefaultValues(t *testing.T) {
 func TestConfigFromFile(t *testing.T) {
 	errEnv := os.Setenv("XPANSE_AGENT_SERVICE_ID", "test_value")
 	assert.Nil(t, errEnv)
-	err := LoadConfig("test_data/xpanse-agent-config.yml")
+	err := LoadConfig("test_data/test-xpanse-agent-config.yml")
 	assert.Nil(t, err)
 	assert.Equal(t, "/tmp", LoadedConfig.RepoCheckoutLocation)
 	assert.Equal(t, 40, LoadedConfig.PollingFrequency)
