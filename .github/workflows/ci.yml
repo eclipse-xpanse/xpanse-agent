@@ -21,6 +21,9 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: ">=1.22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
       - run: go version
       - name: Format code
         run: |
