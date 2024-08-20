@@ -1,0 +1,45 @@
+---
+- name: Manage containers
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: Install packages from requirements.txt
+      pip:
+        requirements: requirements.txt
+        state: present
+        chdir: "/opt/repos/forked/osc/samples/ansible"
+
+    - name: Ensure Docker service is running
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull latest container image
+      docker_image:
+        name: "bitnami/kafka:3.3.2"
+        source: pull
+        force_source: yes
+
+    - name: Run container
+      docker_container:
+        name: "kafka-server"
+        image: "bitnami/kafka:3.3.2"
+        env:
+          KAFKA_BROKER_ID: "1"
+          KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://192.168.10.103:9092"
+          KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
+          ALLOW_PLAINTEXT_LISTENER: "yes"
+          KAFKA_CFG_ZOOKEEPER_CONNECT: "192.168.10.103:2181"
+        state: started
+        restart_policy: always
+        network_mode: host
+        ports:
+          - "9092:9092"
+          - "9093:9093"
+
+    - name: Remove unused images
+      docker_prune:
+        images: yes

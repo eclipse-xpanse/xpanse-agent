@@ -21,6 +21,7 @@ func CloneProject(projectUrl string, serviceId string, branch string) error {
 	}
 	var repository *git.Repository
 	var err error
+	var w *git.Worktree
 
 	repository, err = git.PlainClone(fmt.Sprintf("/tmp/%s", serviceId), false, gitConfig)
 
@@ -47,7 +48,7 @@ func CloneProject(projectUrl string, serviceId string, branch string) error {
 		}
 
 		// load default main/master worktree
-		w, workTreeError := repository.Worktree()
+		w, err = repository.Worktree()
 
 		checkoutOptions := &git.CheckoutOptions{Branch: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", branch)), Force: true}
 		if w != nil {
@@ -56,8 +57,8 @@ func CloneProject(projectUrl string, serviceId string, branch string) error {
 				return checkoutErr
 			}
 		}
-		if workTreeError != nil {
-			return workTreeError
+		if err != nil {
+			return err
 		}
 	}
 
