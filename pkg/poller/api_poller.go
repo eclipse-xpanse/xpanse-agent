@@ -11,14 +11,13 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"xpanse-agent/pkg/common"
 	"xpanse-agent/pkg/logger"
 	"xpanse-agent/pkg/xpanseclient"
 )
 
 func PollXpanseApi(serviceId string, resourceName string, xpanseApiEndpoint string) {
 	hc := &http.Client{
-		Transport: &common.HttpRequestLogger{
+		Transport: &logger.HttpRequestLogger{
 			RoundTripper: http.DefaultTransport,
 		},
 	}
