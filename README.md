@@ -42,3 +42,10 @@ Use "xpanse-agent [command] --help" for more information about a command.
 All arguments can also be read from environment variables. 
 Variables in environment variables must be all in uppercase and 
 must be prefixed with `XPANSE_AGENT_`.
+
+## Generate Client
+
+To generate xpanse API client, copy the xpanse openapi JSON file to `clientgen` folder.
+
+After that execute the [generate.go](clientgen/generate.go) file to generate the new client file. 
+This will replace the existing [client go file](pkg/xpanseclient/xpanseclient.go). 

@@ -1,0 +1,5 @@
+package: xpanseclient
+output: ../pkg/xpanseclient/xpanseclient.go
+generate:
+  models: true
+  client: true

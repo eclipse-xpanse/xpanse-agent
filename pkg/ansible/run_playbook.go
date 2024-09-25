@@ -32,7 +32,7 @@ func RunPlaybook(playbookName string,
 
 	if manageVirtualEnv {
 		logger.Logger.Info("preparing virtual environment in " + virtualEnvRootDir)
-		err = CreateVirtualEnv(virtualEnvRootDir, pythonVersion, requirementsFileNameInRepo)
+		err = createVirtualEnv(virtualEnvRootDir, pythonVersion, requirementsFileNameInRepo)
 		if err != nil {
 			return err
 		}
