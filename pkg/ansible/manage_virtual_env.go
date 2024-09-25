@@ -14,7 +14,7 @@ import (
 	"xpanse-agent/pkg/logger"
 )
 
-func CreateVirtualEnv(virtualEnvDir string, pythonVersion float32, moduleRequirementsFile string) error {
+func createVirtualEnv(virtualEnvDir string, pythonVersion float32, moduleRequirementsFile string) error {
 	var cmd *exec.Cmd
 	var err error
 	// Check if the virtualenv already exists

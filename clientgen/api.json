@@ -1,0 +1,297 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "XpanseAPI",
+    "description": "RESTful Services to interact with Xpanse runtime.",
+    "version": "1.0.20-SNAPSHOT"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Agent Api",
+      "description": "APIs for agent to poll pending configuration change requests."
+    }
+  ],
+  "paths": {
+    "/xpanse/agent/poll/{serviceId}/{resourceName}": {
+      "get": {
+        "tags": [
+          "Agent Api"
+        ],
+        "description": "Get pending configuration change request for agents to poll.",
+        "operationId": "getPendingConfigurationChangeRequest",
+        "parameters": [
+          {
+            "name": "serviceId",
+            "in": "path",
+            "description": "The id of the deployed service",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resourceName",
+            "in": "path",
+            "description": "The name of the resource of deployed service",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "408": {
+            "description": "Request Timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceConfigurationChangeRequest"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Response": {
+        "required": [
+          "details",
+          "resultType",
+          "success"
+        ],
+        "type": "object",
+        "properties": {
+          "resultType": {
+            "type": "string",
+            "description": "The result code of response.",
+            "enum": [
+              "Success",
+              "Runtime Error",
+              "Parameters Invalid",
+              "Terraform Script Invalid",
+              "Unprocessable Entity",
+              "Response Not Valid",
+              "Failure while connecting to backend",
+              "Credential Capability Not Found",
+              "Credentials Not Found",
+              "Credential Variables Not Complete",
+              "Flavor Invalid",
+              "Terraform Execution Failed",
+              "Plugin Not Found",
+              "Deployer Not Found",
+              "No Credential Definition Available",
+              "Invalid Service State",
+              "Resource Invalid For Monitoring",
+              "Unhandled Exception",
+              "Service Template Already Registered",
+              "Icon Processing Failed",
+              "Service Template Not Registered",
+              "Service Template Not Approved",
+              "Service Template Already Reviewed",
+              "Invalid Service Version",
+              "Invalid Service Flavors",
+              "Invalid Billing Config",
+              "Unavailable Service Regions",
+              "Service Deployment Not Found",
+              "Resource Not Found",
+              "Deployment Variable Invalid",
+              "Service Template Update Not Allowed",
+              "Service Template Still In Use",
+              "Unauthorized",
+              "Access Denied",
+              "Sensitive Field Encryption Or Decryption Failed Exception",
+              "Unsupported Enum Value",
+              "Terraform Boot Request Failed",
+              "Tofu Maker Request Failed",
+              "Metrics Data Not Ready",
+              "Variable Validation Failed",
+              "Variable Schema Definition Invalid",
+              "Policy Not Found",
+              "Duplicate Policy",
+              "Policy Validation Failed",
+              "Policy Evaluation Failed",
+              "Current Login User No Found",
+              "Service Details No Accessible",
+              "Migrating activiti Task Not Found",
+              "Service Migration Failed Exception",
+              "Service Migration Not Found",
+              "Service Locked",
+              "Eula Not Accepted",
+              "Service Flavor Downgrade Not Allowed",
+              "Billing Mode Not Supported",
+              "Service State Management Task Not Found",
+              "Service Order Not Found",
+              "Service Price Calculation Failed",
+              "Invalid Git Repo Details",
+              "File Locked",
+              "Service Configuration Invalid"
+            ]
+          },
+          "details": {
+            "type": "array",
+            "description": "Details of the errors occurred",
+            "items": {
+              "type": "string",
+              "description": "Details of the errors occurred"
+            }
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Describes if the request is successful"
+          }
+        }
+      },
+      "AnsibleScriptConfig": {
+        "required": [
+          "branch",
+          "galaxyFile",
+          "isPrepareAnsibleEnvironment",
+          "playbookName",
+          "pythonVersion",
+          "repoUrl",
+          "requirementsFile",
+          "virtualEnv"
+        ],
+        "type": "object",
+        "properties": {
+          "playbookName": {
+            "type": "string",
+            "description": "name of the ansible playbook. Should be the fully qualified file name (including the directory path) in the repo.Eg.,'playbook-name.yml'"
+          },
+          "virtualEnv": {
+            "type": "string",
+            "description": "Path where the virtualenv is created."
+          },
+          "pythonVersion": {
+            "type": "number",
+            "description": "Version of the python. This version of python must be available in node which is acting as the configManager.",
+            "format": "float"
+          },
+          "isPrepareAnsibleEnvironment": {
+            "type": "boolean",
+            "description": "The agent will prepare the virtual environment if this true.Otherwise it is assumed that the environment is already prepared as part of the resource creation."
+          },
+          "repoUrl": {
+            "type": "string",
+            "description": "Url of the script repo."
+          },
+          "branch": {
+            "type": "string",
+            "description": "Branch of the git repo."
+          },
+          "requirementsFile": {
+            "type": "string",
+            "description": "the python module requirements file in GIT repo. Should be the fully qualified file name (including the directory path). E.g modules/requirements.txt"
+          },
+          "galaxyFile": {
+            "type": "string",
+            "description": "Full path of the roles and collections requirements file in GIT repo."
+          },
+          "ansibleInventoryRequired": {
+            "type": "boolean",
+            "description": "Defines if the complete service inventory is necessary for running the ansible job."
+          }
+        }
+      },
+      "ServiceConfigurationChangeRequest": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "configParameters": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "ansibleScriptConfig": {
+            "$ref": "#/components/schemas/AnsibleScriptConfig"
+          },
+          "ansibleInventory": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  }
+}

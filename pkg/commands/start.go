@@ -43,6 +43,7 @@ var startCommand = &cobra.Command{
 			config.LoadedConfig.ServiceId,
 			config.LoadedConfig.ResourceName,
 			config.LoadedConfig.PollingFrequency,
+			config.LoadedConfig.XpanseApiEndpoint,
 		)
 	},
 
