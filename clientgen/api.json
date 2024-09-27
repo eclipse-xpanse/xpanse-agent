@@ -18,6 +18,111 @@
     }
   ],
   "paths": {
+    "/xpanse/agent/update/status/{changeId}": {
+      "put": {
+        "tags": [
+          "Agent Api"
+        ],
+        "description": "Update configuration change result for agents.",
+        "operationId": "updateConfigurationChangeResult",
+        "parameters": [
+          {
+            "name": "changeId",
+            "in": "path",
+            "description": "id of the update request.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceConfigurationChangeResult"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "408": {
+            "description": "Request Timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/xpanse/agent/poll/{serviceId}/{resourceName}": {
       "get": {
         "tags": [
@@ -117,7 +222,7 @@
             }
           },
           "200": {
-            "description": "OK",
+            "description": "pending configuration update request details",
             "content": {
               "application/json": {
                 "schema": {
@@ -125,6 +230,9 @@
                 }
               }
             }
+          },
+          "204": {
+            "description": "no pending configuration update requests"
           }
         }
       }
@@ -203,7 +311,8 @@
               "Service Price Calculation Failed",
               "Invalid Git Repo Details",
               "File Locked",
-              "Service Configuration Invalid"
+              "Service Configuration Invalid",
+              "Service Configuration Update Request Not Found"
             ]
           },
           "details": {
@@ -219,6 +328,38 @@
             "description": "Describes if the request is successful"
           }
         }
+      },
+      "AnsibleTaskResult": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "isSuccessful": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "ServiceConfigurationChangeResult": {
+        "type": "object",
+        "properties": {
+          "isSuccessful": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": "string"
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnsibleTaskResult"
+            }
+          }
+        },
+        "description": "result of the service configuration update request."
       },
       "AnsibleScriptConfig": {
         "required": [
@@ -275,7 +416,7 @@
       "ServiceConfigurationChangeRequest": {
         "type": "object",
         "properties": {
-          "orderId": {
+          "changeId": {
             "type": "string",
             "format": "uuid"
           },

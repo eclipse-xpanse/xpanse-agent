@@ -11,23 +11,25 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
-	"os"
+	agentConfig "xpanse-agent/pkg/config"
+	"xpanse-agent/pkg/logger"
 )
 
-func CloneProject(projectUrl string, serviceId string, branch string) error {
+func CloneProject(projectUrl string, branch string) error {
 	gitConfig := &git.CloneOptions{
 		URL:      projectUrl,
-		Progress: os.Stdout,
+		Progress: nil,
 	}
 	var repository *git.Repository
 	var err error
 	var w *git.Worktree
 
-	repository, err = git.PlainClone(fmt.Sprintf("/tmp/%s", serviceId), false, gitConfig)
+	repository, err = git.PlainClone(GetRepoDirectory(), false, gitConfig)
 
 	if err != nil {
 		if errors.Is(err, git.ErrRepositoryAlreadyExists) && repository == nil {
-			repository, err = git.PlainOpen(fmt.Sprintf("/tmp/%s", serviceId))
+			logger.Logger.Info("Repository already cloned. Reusing it.")
+			repository, err = git.PlainOpen(GetRepoDirectory())
 			if err != nil {
 				fmt.Println("Error opening repository:", err)
 				return err
@@ -37,6 +39,7 @@ func CloneProject(projectUrl string, serviceId string, branch string) error {
 
 	if repository != nil {
 		// Fetch updates from the remote
+		logger.Logger.Info("Fetching updates from remote.")
 		err = repository.Fetch(&git.FetchOptions{
 			RefSpecs: []config.RefSpec{"refs/*:refs/*"},
 		})
@@ -63,4 +66,8 @@ func CloneProject(projectUrl string, serviceId string, branch string) error {
 	}
 
 	return nil
+}
+
+func GetRepoDirectory() string {
+	return agentConfig.LoadedConfig.RepoCheckoutLocation + "/" + agentConfig.LoadedConfig.ServiceId
 }
