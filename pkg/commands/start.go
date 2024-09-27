@@ -39,12 +39,7 @@ var startCommand = &cobra.Command{
 		logger.Logger.Info(fmt.Sprintf("Agent started with serviceId %s, resourceName %s and with polling frequency %d",
 			config.LoadedConfig.ServiceId, config.LoadedConfig.ResourceName, config.LoadedConfig.PollingFrequency))
 
-		scheduler.StartPolling(
-			config.LoadedConfig.ServiceId,
-			config.LoadedConfig.ResourceName,
-			config.LoadedConfig.PollingFrequency,
-			config.LoadedConfig.XpanseApiEndpoint,
-		)
+		scheduler.StartPolling()
 	},
 
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {

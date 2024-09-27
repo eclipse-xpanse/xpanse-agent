@@ -9,8 +9,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
-	"xpanse-agent/pkg/config"
+	"xpanse-agent/pkg/git"
 	"xpanse-agent/pkg/logger"
 )
 
@@ -21,15 +20,20 @@ func createVirtualEnv(virtualEnvDir string, pythonVersion float32, moduleRequire
 	if _, err = os.Stat(virtualEnvDir); !os.IsNotExist(err) {
 		logger.Logger.Info(fmt.Sprintf("Virtual environment '%s' already exists. Installing required modules on the same.", virtualEnvDir))
 	} else {
-		cmd = exec.Command(fmt.Sprintf("python%.2f", pythonVersion), "-m", "venv", filepath.Dir(virtualEnvDir))
+		cmd = exec.Command(fmt.Sprintf("python%.2f", pythonVersion), "-m", "venv", virtualEnvDir)
 		err = cmd.Run()
 	}
 	if err != nil {
 		logger.Logger.Error(fmt.Sprintf("Error creating virtual environment: %s", err))
 		return err
 	}
-	err = installRequirements(virtualEnvDir, moduleRequirementsFile)
-	logger.Logger.Info(fmt.Sprintf("Virtual environment '%s' prepared successfully.", virtualEnvDir))
+
+	if moduleRequirementsFile != "" {
+		err = installRequirements(virtualEnvDir, moduleRequirementsFile)
+	}
+	if err != nil {
+		logger.Logger.Info(fmt.Sprintf("Virtual environment '%s' prepared successfully.", virtualEnvDir))
+	}
 	return err
 }
 
@@ -41,8 +45,8 @@ func installRequirements(virtualEnvDir string, requirementsFile string) error {
 		logger.Logger.Error(fmt.Sprintf("Error getting current working directory: %s", err))
 		return err
 	}
-	err = os.Chdir(config.LoadedConfig.RepoCheckoutLocation)
-	logger.Logger.Info(fmt.Sprintf("running pip install from %s", config.LoadedConfig.RepoCheckoutLocation))
+	err = os.Chdir(git.GetRepoDirectory())
+	logger.Logger.Info(fmt.Sprintf("running pip install from %s", git.GetRepoDirectory()))
 	if err != nil {
 		return err
 	}

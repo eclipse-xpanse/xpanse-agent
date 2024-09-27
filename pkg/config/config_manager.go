@@ -23,7 +23,7 @@ type AgentConfig struct {
 	XpanseApiEndpoint    string `mapstructure:"xpanse_api_endpoint"`
 }
 
-var LoadedConfig AgentConfig
+var LoadedConfig *AgentConfig
 
 func LoadConfig(configFileLocation string) error {
 	setDefaultValues()

@@ -14,7 +14,8 @@ import (
 	"github.com/apenella/go-ansible/v2/pkg/execute/stdoutcallback"
 	"github.com/apenella/go-ansible/v2/pkg/playbook"
 	"io"
-	"xpanse-agent/pkg/config"
+	"strings"
+	"xpanse-agent/pkg/git"
 	"xpanse-agent/pkg/logger"
 )
 
@@ -24,21 +25,30 @@ func RunPlaybook(playbookName string,
 	virtualEnvRootDir string,
 	pythonVersion float32,
 	manageVirtualEnv bool,
-	requirementsFileNameInRepo string) error {
+	requirementsFileNameInRepo string) (*results.AnsiblePlaybookJSONResults, error) {
 	var res *results.AnsiblePlaybookJSONResults
 	var err error
 	buff := new(bytes.Buffer)
 	buffError := new(bytes.Buffer)
-
+	var usedVirtualEnvVar string
+	if virtualEnvRootDir != "" {
+		if strings.HasSuffix(virtualEnvRootDir, "/") {
+			usedVirtualEnvVar = strings.TrimSuffix(virtualEnvRootDir, "/")
+		} else {
+			usedVirtualEnvVar = virtualEnvRootDir
+		}
+	} else {
+		usedVirtualEnvVar = "/tmp/virtualEnv"
+	}
 	if manageVirtualEnv {
-		logger.Logger.Info("preparing virtual environment in " + virtualEnvRootDir)
-		err = createVirtualEnv(virtualEnvRootDir, pythonVersion, requirementsFileNameInRepo)
+		logger.Logger.Info("preparing virtual environment in " + usedVirtualEnvVar)
+		err = createVirtualEnv(usedVirtualEnvVar, pythonVersion, requirementsFileNameInRepo)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	logger.Logger.Info("Running ansible task using ansible installed in venv " + virtualEnvRootDir)
+	logger.Logger.Info("Running ansible task using ansible installed in venv " + usedVirtualEnvVar)
 
 	ansiblePlaybookOptions := &playbook.AnsiblePlaybookOptions{
 		Become:    true,
@@ -50,14 +60,14 @@ func RunPlaybook(playbookName string,
 	playbookCmd := playbook.NewAnsiblePlaybookCmd(
 		playbook.WithPlaybooks(playbookName),
 		playbook.WithPlaybookOptions(ansiblePlaybookOptions),
-		playbook.WithBinary(fmt.Sprintf("%s/bin/ansible-playbook", virtualEnvRootDir)),
+		playbook.WithBinary(fmt.Sprintf("%s/bin/ansible-playbook", usedVirtualEnvVar)),
 	)
 
 	// execute the ansible command constructed above.
 	exec := stdoutcallback.NewJSONStdoutCallbackExecute(
 		execute.NewDefaultExecute(
 			execute.WithCmd(playbookCmd),
-			execute.WithCmdRunDir(config.LoadedConfig.RepoCheckoutLocation),
+			execute.WithCmdRunDir(git.GetRepoDirectory()),
 			execute.WithErrorEnrich(playbook.NewAnsiblePlaybookErrorEnrich()),
 			execute.WithWrite(io.Writer(buff)),
 			execute.WithWriteError(io.Writer(buffError)),
@@ -66,7 +76,7 @@ func RunPlaybook(playbookName string,
 	err = exec.Execute(context.TODO())
 	if err != nil {
 		logger.Logger.Error(err.Error())
-		return err
+		return nil, err
 	}
 
 	// all warnings from Ansible are written to stderr stream.
@@ -81,12 +91,11 @@ func RunPlaybook(playbookName string,
 	res, err = results.ParseJSONResultsStream(io.Reader(buff))
 	if err != nil {
 		logger.Logger.Error(err.Error())
-		return err
+		return nil, err
 	}
 
 	parseAndLogAnsibleOutputForResults(res)
-
-	return err
+	return res, err
 }
 
 func parseAndLogAnsibleOutputForResults(ansibleOutput *results.AnsiblePlaybookJSONResults) {
