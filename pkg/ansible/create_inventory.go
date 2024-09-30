@@ -21,11 +21,15 @@ func createInventoryFile(inventoryContent *map[string]interface{}) (*os.File, er
 	}
 
 	jsonData, err := json.Marshal(&inventoryContent)
+	if err != nil {
+		return nil, err
+	}
 
 	_, err = tempFile.Write(jsonData)
 	if err != nil {
 		return nil, err
 	}
+
 	logger.Logger.Info(fmt.Sprintf("Inventory file created at %s", tempFile.Name()))
 	return tempFile, nil
 }
