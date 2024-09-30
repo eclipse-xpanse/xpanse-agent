@@ -21,7 +21,7 @@ import (
 
 func RunPlaybook(playbookName string,
 	extraVars map[string]interface{},
-	inventory string,
+	inventory *map[string]interface{},
 	virtualEnvRootDir string,
 	pythonVersion float32,
 	manageVirtualEnv bool,
@@ -49,10 +49,13 @@ func RunPlaybook(playbookName string,
 	}
 
 	logger.Logger.Info("Running ansible task using ansible installed in venv " + usedVirtualEnvVar)
-
+	inventoryFile, err := createInventoryFile(inventory)
+	if err != nil {
+		return nil, err
+	}
 	ansiblePlaybookOptions := &playbook.AnsiblePlaybookOptions{
 		Become:    true,
-		Inventory: inventory,
+		Inventory: inventoryFile.Name(),
 		ExtraVars: extraVars,
 	}
 
@@ -95,6 +98,7 @@ func RunPlaybook(playbookName string,
 	}
 
 	parseAndLogAnsibleOutputForResults(res)
+	deleteInventoryFile(inventoryFile.Name())
 	return res, err
 }
 
