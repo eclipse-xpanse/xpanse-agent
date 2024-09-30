@@ -31,6 +31,7 @@ func RunPlaybook(playbookName string,
 	buff := new(bytes.Buffer)
 	buffError := new(bytes.Buffer)
 	var usedVirtualEnvVar string
+	var inventoryFileName string
 	if virtualEnvRootDir != "" {
 		if strings.HasSuffix(virtualEnvRootDir, "/") {
 			usedVirtualEnvVar = strings.TrimSuffix(virtualEnvRootDir, "/")
@@ -49,13 +50,19 @@ func RunPlaybook(playbookName string,
 	}
 
 	logger.Logger.Info("Running ansible task using ansible installed in venv " + usedVirtualEnvVar)
-	inventoryFile, err := createInventoryFile(inventory)
-	if err != nil {
-		return nil, err
+	if inventory != nil {
+		inventoryFile, err := createInventoryFile(inventory)
+		if err != nil {
+			return nil, err
+		}
+		inventoryFileName = inventoryFile.Name()
+	} else {
+		inventoryFileName = ""
 	}
+
 	ansiblePlaybookOptions := &playbook.AnsiblePlaybookOptions{
 		Become:    true,
-		Inventory: inventoryFile.Name(),
+		Inventory: inventoryFileName,
 		ExtraVars: extraVars,
 	}
 
@@ -98,7 +105,7 @@ func RunPlaybook(playbookName string,
 	}
 
 	parseAndLogAnsibleOutputForResults(res)
-	deleteInventoryFile(inventoryFile.Name())
+	deleteInventoryFile(inventoryFileName)
 	return res, err
 }
 

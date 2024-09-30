@@ -35,4 +35,5 @@ func deleteInventoryFile(fileName string) {
 	if err != nil {
 		logger.Logger.Error("Error deleting inventory file. ignoring the error.")
 	}
+	logger.Logger.Info("temporary inventory file cleaned up.")
 }
