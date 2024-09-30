@@ -15,7 +15,7 @@ func TestRunPlaybook(t *testing.T) {
 	err := config.LoadConfig("test_data/test-xpanse-agent-config.yml")
 	assert.Nil(t, err)
 	results, runError := RunPlaybook(
-		"kafka-container-manage.yml", nil, "", "/tmp/kafka-test/", 3.10, true, "requirements.txt")
+		"kafka-container-manage.yml", nil, nil, "/tmp/kafka-test/", 3.10, true, "requirements.txt")
 	assert.Nil(t, runError)
 	assert.NotNil(t, results)
 }

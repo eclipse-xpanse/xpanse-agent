@@ -24,7 +24,7 @@ func init() {
 }
 func TestCloneProject(t *testing.T) {
 	t.Setenv("XPANSE_AGENT_SERVICE_ID", "test")
-	err := CloneProject("https://github.com/swaroopar/osc", "feature/testAnsible")
+	err := CloneRepository("https://github.com/swaroopar/osc", "feature/testAnsible")
 	if err != nil {
 		assert.Empty(t, err)
 	}
@@ -32,7 +32,7 @@ func TestCloneProject(t *testing.T) {
 }
 
 func TestCloneProjectError(t *testing.T) {
-	err := CloneProject("https://github.com/swaroopar/osc-12345", "feature/testAnsible")
+	err := CloneRepository("https://github.com/swaroopar/osc-12345", "feature/testAnsible")
 	if err != nil {
 		assert.NotEmpty(t, err)
 		assert.Error(t, err, git.ErrRepositoryNotExists)

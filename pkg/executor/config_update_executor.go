@@ -14,7 +14,7 @@ import (
 	"xpanse-agent/pkg/xpanseclient"
 )
 
-func informPanicErrorToXpanse(changeId string) {
+func informPanicToXpanse(changeId string) {
 	if r := recover(); r != nil {
 		panicError := fmt.Errorf("change request failed with error: %s", r)
 		logger.Logger.Error(panicError.Error())
@@ -23,15 +23,15 @@ func informPanicErrorToXpanse(changeId string) {
 }
 
 func ConfigUpdate(request xpanseclient.ServiceConfigurationChangeRequest) error {
-	defer informPanicErrorToXpanse(request.ChangeId.String())
+	defer informPanicToXpanse(request.ChangeId.String())
 	var err error
 	var result *results.AnsiblePlaybookJSONResults
-	err = git.CloneProject(request.AnsibleScriptConfig.RepoUrl,
+	err = git.CloneRepository(request.AnsibleScriptConfig.RepoUrl,
 		request.AnsibleScriptConfig.Branch)
 	if err == nil {
 		result, err = ansible.RunPlaybook(request.AnsibleScriptConfig.PlaybookName,
 			*request.ConfigParameters,
-			"",
+			request.AnsibleInventory,
 			request.AnsibleScriptConfig.VirtualEnv,
 			request.AnsibleScriptConfig.PythonVersion,
 			true,

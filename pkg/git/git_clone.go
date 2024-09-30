@@ -15,7 +15,7 @@ import (
 	"xpanse-agent/pkg/logger"
 )
 
-func CloneProject(projectUrl string, branch string) error {
+func CloneRepository(projectUrl string, branch string) error {
 	gitConfig := &git.CloneOptions{
 		URL:      projectUrl,
 		Progress: nil,
