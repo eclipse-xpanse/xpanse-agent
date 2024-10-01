@@ -34,7 +34,7 @@ jobs:
       - name: Set current version env variable
         id: version
         run: |
-          echo "CurrentVersion=$(sed -n 's/^.*version.*= *"\([a-z0-9.]*\)"/\1/pg' version/version.go)" >> $GITHUB_OUTPUT
+          echo "CurrentVersion=$(sed -n 's/^.*Version.*= *"\([a-z0-9.]*\)"/\1/pg' version/version.go)" >> $GITHUB_OUTPUT
           if [ "${{github.event.inputs.ReleaseType}}" = "Major Version" ]; then
             echo "VersionFragment=major" >> $GITHUB_ENV
           elif [ "${{github.event.inputs.ReleaseType}}" = "Minor Version" ]; then
@@ -52,7 +52,7 @@ jobs:
           version-fragment: ${{ env.VersionFragment }}
       - name: Update version
         run: |
-          sed -i 's/\(^.*version.*= *"\)\([a-z0-9.]*\)"/\1${{ steps.new_version.outputs.next-version }}"/g' version/version.go
+          sed -i 's/\(^.*Version.*= *"\)\([a-z0-9.]*\)"/\1${{ steps.new_version.outputs.next-version }}"/g' version/version.go
       - uses: EndBug/add-and-commit@v9
         with:
           message: Release v${{ steps.new_version.outputs.next-version }}
