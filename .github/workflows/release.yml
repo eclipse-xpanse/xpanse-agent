@@ -34,7 +34,7 @@ jobs:
       - name: Set current version env variable
         id: version
         run: |
-          echo "CurrentVersion=$(sed -n 's/^.*version.*= *"\([a-z0-9.]*\)"/\1/pg' version.go)" >> $GITHUB_OUTPUT
+          echo "CurrentVersion=$(sed -n 's/^.*version.*= *"\([a-z0-9.]*\)"/\1/pg' version/version.go)" >> $GITHUB_OUTPUT
           if [ "${{github.event.inputs.ReleaseType}}" = "Major Version" ]; then
             echo "VersionFragment=major" >> $GITHUB_ENV
           elif [ "${{github.event.inputs.ReleaseType}}" = "Minor Version" ]; then
