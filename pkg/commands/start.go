@@ -58,7 +58,7 @@ func init() {
 	startCommand.Flags().IntP(jobFrequencyArgument, "p", config.DefaultApiPollingFrequencyInSeconds, "Polling frequency for change requests in seconds")
 	startCommand.Flags().StringVarP(&configFile, configFileLocationArgument, "c", config.DefaultAgentConfigFile, "Config file can contain all input arguments or some. "+
 		"This parameter must contain the relative path of the config file. Eg: /tmp/config.yaml")
-	startCommand.Flags().StringP(repoCheckoutFolderArgument, "f", config.DefaultRepoCheckoutFolder, "Folder to which ")
+	startCommand.Flags().StringP(repoCheckoutFolderArgument, "f", config.DefaultRepoCheckoutFolder, "Folder to which GIT repos will be checked out to.")
 
 	// necessary to bind the flag input of cobra command to viper config.
 	// then all data can be accessed via the AgentConfig struct.

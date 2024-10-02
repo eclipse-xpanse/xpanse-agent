@@ -7,7 +7,9 @@ package executor
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"strings"
@@ -25,7 +27,18 @@ func PollXpanseApiAndExecuteChanges() error {
 	if c != nil {
 		resp, requestError := c.GetPendingConfigurationChangeRequestWithResponse(context.Background(), config.LoadedConfig.ServiceId, config.LoadedConfig.ResourceName)
 		if requestError != nil {
-			logger.Logger.Error(requestError.Error())
+			var ne net.Error
+			if errors.As(requestError, &ne) && ne.Timeout() {
+				logger.Logger.Error(fmt.Sprintf("Request timed out: %s", ne))
+				// agent does not exit if the xpanse API is not reachable on the specified details.
+				return requestError
+			}
+			var opErr *net.OpError
+			if errors.As(requestError, &opErr) && opErr.Op == "dial" {
+				logger.Logger.Error(fmt.Sprintf("Connection refused: %s", opErr))
+				// agent does not exit if the xpanse API is not running on the specified host and port.
+				return requestError
+			}
 			os.Exit(1)
 		}
 
