@@ -36,6 +36,7 @@ func ConfigUpdate(request xpanseclient.ServiceConfigurationChangeRequest) error 
 			request.AnsibleScriptConfig.PythonVersion,
 			true,
 			request.AnsibleScriptConfig.RequirementsFile,
+			request.AnsibleScriptConfig.GalaxyFile,
 		)
 	}
 	updateResultToXpanse(err, result, request.ChangeId.String())

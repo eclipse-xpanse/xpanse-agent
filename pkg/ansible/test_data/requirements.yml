@@ -1,0 +1,4 @@
+collections:
+  - geerlingguy.k8s
+roles:
+  - name: geerlingguy.ansible
