@@ -14,7 +14,6 @@ import (
 	"github.com/apenella/go-ansible/v2/pkg/execute/stdoutcallback"
 	"github.com/apenella/go-ansible/v2/pkg/playbook"
 	"io"
-	"strings"
 	"xpanse-agent/pkg/git"
 	"xpanse-agent/pkg/logger"
 )
@@ -25,22 +24,14 @@ func RunPlaybook(playbookName string,
 	virtualEnvRootDir string,
 	pythonVersion float32,
 	manageVirtualEnv bool,
-	requirementsFileNameInRepo string) (*results.AnsiblePlaybookJSONResults, error) {
+	requirementsFileNameInRepo string,
+	galaxyFile string) (*results.AnsiblePlaybookJSONResults, error) {
 	var res *results.AnsiblePlaybookJSONResults
 	var err error
 	buff := new(bytes.Buffer)
 	buffError := new(bytes.Buffer)
-	var usedVirtualEnvVar string
 	var inventoryFileName string
-	if virtualEnvRootDir != "" {
-		if strings.HasSuffix(virtualEnvRootDir, "/") {
-			usedVirtualEnvVar = strings.TrimSuffix(virtualEnvRootDir, "/")
-		} else {
-			usedVirtualEnvVar = virtualEnvRootDir
-		}
-	} else {
-		usedVirtualEnvVar = "/tmp/virtualEnv"
-	}
+	var usedVirtualEnvVar = GetVirtualEnvRootDirectory(virtualEnvRootDir)
 	if manageVirtualEnv {
 		logger.Logger.Info("preparing virtual environment in " + usedVirtualEnvVar)
 		err = createVirtualEnv(usedVirtualEnvVar, pythonVersion, requirementsFileNameInRepo)
@@ -58,6 +49,11 @@ func RunPlaybook(playbookName string,
 		inventoryFileName = inventoryFile.Name()
 	} else {
 		inventoryFileName = ""
+	}
+
+	err = installGalaxyDependencies(galaxyFile, virtualEnvRootDir)
+	if err != nil {
+		return nil, err
 	}
 
 	ansiblePlaybookOptions := &playbook.AnsiblePlaybookOptions{

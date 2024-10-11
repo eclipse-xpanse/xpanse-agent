@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 	"xpanse-agent/pkg/git"
 	"xpanse-agent/pkg/logger"
 )
@@ -71,4 +72,18 @@ func installRequirements(virtualEnvDir string, requirementsFile string) error {
 	// return back to original directory.
 	err = os.Chdir(originalWorkingDir)
 	return err
+}
+
+func GetVirtualEnvRootDirectory(virtualEnvRootDir string) string {
+	var usedVirtualEnvVar string
+	if virtualEnvRootDir != "" {
+		if strings.HasSuffix(virtualEnvRootDir, "/") {
+			usedVirtualEnvVar = strings.TrimSuffix(virtualEnvRootDir, "/")
+		} else {
+			usedVirtualEnvVar = virtualEnvRootDir
+		}
+	} else {
+		usedVirtualEnvVar = "/tmp/virtualEnv"
+	}
+	return usedVirtualEnvVar
 }
