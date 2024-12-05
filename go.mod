@@ -4,7 +4,7 @@ go 1.22.5
 
 require (
 	github.com/apenella/go-ansible/v2 v2.1.0
-	github.com/go-co-op/gocron/v2 v2.12.1
+	github.com/go-co-op/gocron/v2 v2.12.4
 	github.com/go-git/go-git/v5 v5.12.0
 	github.com/google/uuid v1.6.0
 	github.com/oapi-codegen/runtime v1.1.1
