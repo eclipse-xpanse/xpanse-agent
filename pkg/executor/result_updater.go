@@ -8,11 +8,12 @@ package executor
 import (
 	"context"
 	results "github.com/apenella/go-ansible/v2/pkg/execute/result/json"
+	"github.com/google/uuid"
 	"xpanse-agent/pkg/logger"
 	"xpanse-agent/pkg/xpanseclient"
 )
 
-func updateResultToXpanse(err error, ansibleOutput *results.AnsiblePlaybookJSONResults, changeId string) {
+func updateResultToXpanse(err error, ansibleOutput *results.AnsiblePlaybookJSONResults, changeId uuid.UUID) {
 	var isSuccessful bool
 	var errorString string
 	var tasks []xpanseclient.AnsibleTaskResult
@@ -37,9 +38,9 @@ func updateResultToXpanse(err error, ansibleOutput *results.AnsiblePlaybookJSONR
 						resultMessage = ""
 					}
 					tasks = append(tasks, xpanseclient.AnsibleTaskResult{
-						IsSuccessful: &(taskSuccessful),
+						IsSuccessful: taskSuccessful,
 						Message:      &resultMessage,
-						Name:         &name,
+						Name:         name,
 					})
 				}
 			}
@@ -52,16 +53,16 @@ func updateResultToXpanse(err error, ansibleOutput *results.AnsiblePlaybookJSONR
 	}
 
 	if c != nil {
-		resp, requestError := c.UpdateConfigurationChangeResult(context.Background(), changeId, xpanseclient.ServiceConfigurationChangeResult{
+		resp, requestError := c.UpdateServiceChangeResultWithResponse(context.Background(), changeId, xpanseclient.ServiceChangeResult{
 			Error:        &errorString,
-			IsSuccessful: &isSuccessful,
+			IsSuccessful: isSuccessful,
 			Tasks:        &tasks,
 		})
 		if requestError != nil {
 			logger.Logger.Error(requestError.Error())
 		}
 		if resp != nil {
-			logger.Logger.Info(resp.Status)
+			logger.Logger.Info(resp.Status())
 		}
 	}
 }

@@ -1,9 +1,9 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.1.0",
   "info": {
     "title": "XpanseAPI",
     "description": "RESTful Services to interact with Xpanse runtime.",
-    "version": "1.0.20-SNAPSHOT"
+    "version": "1.0.25-SNAPSHOT"
   },
   "servers": [
     {
@@ -14,17 +14,17 @@
   "tags": [
     {
       "name": "Agent Api",
-      "description": "APIs for agent to poll pending configuration change requests."
+      "description": "APIs for agent to poll pending service change requests."
     }
   ],
   "paths": {
-    "/xpanse/agent/update/status/{changeId}": {
+    "/agent/xpanse/update/status/{changeId}": {
       "put": {
         "tags": [
           "Agent Api"
         ],
-        "description": "Update configuration change result for agents.",
-        "operationId": "updateConfigurationChangeResult",
+        "description": "Update service change result for agents.",
+        "operationId": "updateServiceChangeResult",
         "parameters": [
           {
             "name": "changeId",
@@ -32,7 +32,8 @@
             "description": "id of the update request.",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -40,49 +41,22 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ServiceConfigurationChangeResult"
+                "$ref": "#/components/schemas/ServiceChangeResult"
               }
             }
           },
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Response"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Response"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Response"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Response"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -92,17 +66,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Response"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Response"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -112,24 +86,51 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Response"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
           },
-          "200": {
-            "description": "OK"
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/xpanse/agent/poll/{serviceId}/{resourceName}": {
+    "/agent/xpanse/poll/{serviceId}/{resourceName}": {
       "get": {
         "tags": [
           "Agent Api"
         ],
-        "description": "Get pending configuration change request for agents to poll.",
-        "operationId": "getPendingConfigurationChangeRequest",
+        "description": "Get pending service change request for agents to poll.",
+        "operationId": "getPendingServiceChangeRequest",
         "parameters": [
           {
             "name": "serviceId",
@@ -137,7 +138,8 @@
             "description": "The id of the deployed service",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           },
           {
@@ -151,42 +153,25 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Internal Server Error",
+          "200": {
+            "description": "pending service change update request details",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Response"
+                  "$ref": "#/components/schemas/ServiceChangeRequest"
                 }
               }
             }
           },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Response"
-                }
-              }
-            }
+          "204": {
+            "description": "no pending service change update requests"
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Response"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Response"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -196,17 +181,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Response"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Response"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -216,23 +201,40 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Response"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
           },
-          "200": {
-            "description": "pending configuration update request details",
+          "422": {
+            "description": "Unprocessable Entity",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ServiceConfigurationChangeRequest"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
           },
-          "204": {
-            "description": "no pending configuration update requests"
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -240,19 +242,13 @@
   },
   "components": {
     "schemas": {
-      "Response": {
-        "required": [
-          "details",
-          "resultType",
-          "success"
-        ],
+      "ErrorResponse": {
         "type": "object",
         "properties": {
-          "resultType": {
+          "errorType": {
             "type": "string",
             "description": "The result code of response.",
             "enum": [
-              "Success",
               "Runtime Error",
               "Parameters Invalid",
               "Terraform Script Invalid",
@@ -270,25 +266,25 @@
               "Invalid Service State",
               "Resource Invalid For Monitoring",
               "Unhandled Exception",
-              "Service Template Already Registered",
               "Icon Processing Failed",
               "Service Template Not Registered",
-              "Service Template Not Approved",
-              "Service Template Already Reviewed",
+              "Service Template Unavailable",
+              "Service Template Request Not Allowed",
+              "Service Template Request Not Found",
+              "Review Service Template Request Not Allowed",
               "Invalid Service Version",
               "Invalid Service Flavors",
+              "Mandatory Value Missing",
               "Invalid Billing Config",
               "Unavailable Service Regions",
               "Service Deployment Not Found",
               "Resource Not Found",
               "Deployment Variable Invalid",
-              "Service Template Update Not Allowed",
-              "Service Template Still In Use",
               "Unauthorized",
               "Access Denied",
               "Sensitive Field Encryption Or Decryption Failed Exception",
               "Unsupported Enum Value",
-              "Terraform Boot Request Failed",
+              "Terra Boot Request Failed",
               "Tofu Maker Request Failed",
               "Metrics Data Not Ready",
               "Variable Validation Failed",
@@ -299,9 +295,9 @@
               "Policy Evaluation Failed",
               "Current Login User No Found",
               "Service Details No Accessible",
-              "Migrating activiti Task Not Found",
-              "Service Migration Failed Exception",
-              "Service Migration Not Found",
+              "Service Porting Activiti Task Not Found",
+              "Service Porting Failed Exception",
+              "Service Porting Not Found",
               "Service Locked",
               "Eula Not Accepted",
               "Service Flavor Downgrade Not Allowed",
@@ -312,84 +308,97 @@
               "Invalid Git Repo Details",
               "File Locked",
               "Service Configuration Invalid",
-              "Service Configuration Update Request Not Found"
+              "Service Configuration Update Request Not Found",
+              "Service Configuration Not Found",
+              "Invalid Deployer Tool",
+              "Deployment Scripts Creation Failed",
+              "Async Start Service Error",
+              "Async Stop Service Error",
+              "Async Restart Service Error",
+              "Deployment Failed Exception",
+              "Destroy Failed Exception",
+              "Service Action Invalid"
             ]
           },
           "details": {
             "type": "array",
             "description": "Details of the errors occurred",
             "items": {
-              "type": "string",
-              "description": "Details of the errors occurred"
+              "type": "string"
             }
-          },
-          "success": {
-            "type": "boolean",
-            "description": "Describes if the request is successful"
           }
-        }
+        },
+        "required": [
+          "details",
+          "errorType"
+        ]
       },
       "AnsibleTaskResult": {
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "name of the Ansible task"
           },
           "isSuccessful": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Depicts if the task is successful"
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "description": "Data from the task. Will be returned both for successful and failure cases."
           }
-        }
+        },
+        "required": [
+          "isSuccessful",
+          "name"
+        ]
       },
-      "ServiceConfigurationChangeResult": {
+      "ServiceChangeResult": {
         "type": "object",
+        "description": "result of the service change request.",
         "properties": {
           "isSuccessful": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "describes if the change is successfully executed."
           },
           "error": {
-            "type": "string"
+            "type": "string",
+            "description": "error description if the task failed."
           },
           "tasks": {
             "type": "array",
+            "description": "describes result of each Ansible task executed by the agent.",
             "items": {
               "$ref": "#/components/schemas/AnsibleTaskResult"
             }
           }
         },
-        "description": "result of the service configuration update request."
+        "required": [
+          "isSuccessful"
+        ]
       },
       "AnsibleScriptConfig": {
-        "required": [
-          "branch",
-          "galaxyFile",
-          "isPrepareAnsibleEnvironment",
-          "playbookName",
-          "pythonVersion",
-          "repoUrl",
-          "requirementsFile",
-          "virtualEnv"
-        ],
         "type": "object",
         "properties": {
           "playbookName": {
             "type": "string",
-            "description": "name of the ansible playbook. Should be the fully qualified file name (including the directory path) in the repo.Eg.,'playbook-name.yml'"
+            "description": "name of the ansible playbook. Should be the fully qualified file name (including the directory path) in the repo.",
+            "example": "playbook-name.yml"
           },
           "virtualEnv": {
             "type": "string",
-            "description": "Path where the virtualenv is created."
+            "description": "Path where the virtualenv must be created.",
+            "example": "/tmp/virtualEnv"
           },
           "pythonVersion": {
-            "type": "number",
+            "type": "string",
             "description": "Version of the python. This version of python must be available in node which is acting as the configManager.",
-            "format": "float"
+            "example": 3.1
           },
           "isPrepareAnsibleEnvironment": {
             "type": "boolean",
-            "description": "The agent will prepare the virtual environment if this true.Otherwise it is assumed that the environment is already prepared as part of the resource creation."
+            "description": "The agent will prepare the virtual environment if this true.Otherwise it is assumed that the environment is already prepared as part of the resource creation or the VM base image build."
           },
           "repoUrl": {
             "type": "string",
@@ -401,7 +410,8 @@
           },
           "requirementsFile": {
             "type": "string",
-            "description": "the python module requirements file in GIT repo. Should be the fully qualified file name (including the directory path). E.g modules/requirements.txt"
+            "description": "the python module requirements file in GIT repo. Should be the fully qualified file name (including the directory path). ",
+            "example": "modules/requirements.txt"
           },
           "galaxyFile": {
             "type": "string",
@@ -411,27 +421,45 @@
             "type": "boolean",
             "description": "Defines if the complete service inventory is necessary for running the ansible job."
           }
-        }
+        },
+        "required": [
+          "branch",
+          "galaxyFile",
+          "isPrepareAnsibleEnvironment",
+          "playbookName",
+          "pythonVersion",
+          "repoUrl",
+          "requirementsFile",
+          "virtualEnv"
+        ]
       },
-      "ServiceConfigurationChangeRequest": {
+      "ServiceChangeRequest": {
         "type": "object",
         "properties": {
           "changeId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "description": "Id of the change request"
           },
-          "configParameters": {
+          "serviceChangeParameters": {
             "type": "object",
-            "additionalProperties": true
+            "additionalProperties": true,
+            "description": "request parameters to be used to execute the change scripts. In case of Ansible, this will be used as extra vars."
           },
           "ansibleScriptConfig": {
-            "$ref": "#/components/schemas/AnsibleScriptConfig"
+            "$ref": "#/components/schemas/AnsibleScriptConfig",
+            "description": "defines the ansible script information."
           },
           "ansibleInventory": {
             "type": "object",
-            "additionalProperties": true
+            "additionalProperties": true,
+            "description": "Inventory information for Ansible script."
           }
-        }
+        },
+        "required": [
+          "changeId",
+          "serviceChangeParameters"
+        ]
       }
     }
   }

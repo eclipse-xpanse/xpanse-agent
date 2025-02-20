@@ -14,14 +14,14 @@ import (
 	"xpanse-agent/pkg/logger"
 )
 
-func createVirtualEnv(virtualEnvDir string, pythonVersion float32, moduleRequirementsFile string) error {
+func createVirtualEnv(virtualEnvDir string, pythonVersion string, moduleRequirementsFile string) error {
 	var cmd *exec.Cmd
 	var err error
 	// Check if the virtualenv already exists
 	if _, err = os.Stat(virtualEnvDir); !os.IsNotExist(err) {
 		logger.Logger.Info(fmt.Sprintf("Virtual environment '%s' already exists. Installing required modules on the same.", virtualEnvDir))
 	} else {
-		cmd = exec.Command(fmt.Sprintf("python%.2f", pythonVersion), "-m", "venv", virtualEnvDir)
+		cmd = exec.Command(fmt.Sprintf("python%s", pythonVersion), "-m", "venv", virtualEnvDir)
 		err = cmd.Run()
 	}
 	if err != nil {
