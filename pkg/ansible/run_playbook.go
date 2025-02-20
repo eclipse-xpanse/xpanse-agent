@@ -22,7 +22,7 @@ func RunPlaybook(playbookName string,
 	extraVars map[string]interface{},
 	inventory *map[string]interface{},
 	virtualEnvRootDir string,
-	pythonVersion float32,
+	pythonVersion string,
 	manageVirtualEnv bool,
 	requirementsFileNameInRepo string,
 	galaxyFile string) (*results.AnsiblePlaybookJSONResults, error) {

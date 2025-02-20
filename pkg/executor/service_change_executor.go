@@ -8,13 +8,14 @@ package executor
 import (
 	"fmt"
 	results "github.com/apenella/go-ansible/v2/pkg/execute/result/json"
+	"github.com/google/uuid"
 	"xpanse-agent/pkg/ansible"
 	"xpanse-agent/pkg/git"
 	"xpanse-agent/pkg/logger"
 	"xpanse-agent/pkg/xpanseclient"
 )
 
-func informPanicToXpanse(changeId string) {
+func informPanicToXpanse(changeId uuid.UUID) {
 	if r := recover(); r != nil {
 		panicError := fmt.Errorf("change request failed with error: %s", r)
 		logger.Logger.Error(panicError.Error())
@@ -22,15 +23,15 @@ func informPanicToXpanse(changeId string) {
 	}
 }
 
-func ConfigUpdate(request xpanseclient.ServiceConfigurationChangeRequest) error {
-	defer informPanicToXpanse(request.ChangeId.String())
+func ConfigUpdate(request xpanseclient.ServiceChangeRequest) error {
+	defer informPanicToXpanse(request.ChangeId)
 	var err error
 	var result *results.AnsiblePlaybookJSONResults
 	err = git.CloneRepository(request.AnsibleScriptConfig.RepoUrl,
 		request.AnsibleScriptConfig.Branch)
 	if err == nil {
 		result, err = ansible.RunPlaybook(request.AnsibleScriptConfig.PlaybookName,
-			*request.ConfigParameters,
+			request.ServiceChangeParameters,
 			request.AnsibleInventory,
 			request.AnsibleScriptConfig.VirtualEnv,
 			request.AnsibleScriptConfig.PythonVersion,
@@ -39,6 +40,6 @@ func ConfigUpdate(request xpanseclient.ServiceConfigurationChangeRequest) error 
 			request.AnsibleScriptConfig.GalaxyFile,
 		)
 	}
-	updateResultToXpanse(err, result, request.ChangeId.String())
+	updateResultToXpanse(err, result, request.ChangeId)
 	return err
 }

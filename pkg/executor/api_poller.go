@@ -9,6 +9,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/google/uuid"
 	"net"
 	"net/http"
 	"os"
@@ -24,8 +25,13 @@ func PollXpanseApiAndExecuteChanges() error {
 		logger.Logger.Error(clientError.Error())
 	}
 
+	serviceIdUuid, err := uuid.Parse(config.LoadedConfig.ServiceId)
+	if err != nil {
+		return err
+	}
+
 	if c != nil {
-		resp, requestError := c.GetPendingConfigurationChangeRequestWithResponse(context.Background(), config.LoadedConfig.ServiceId, config.LoadedConfig.ResourceName)
+		resp, requestError := c.GetPendingServiceChangeRequestWithResponse(context.Background(), serviceIdUuid, config.LoadedConfig.ResourceName)
 		if requestError != nil {
 			var ne net.Error
 			if errors.As(requestError, &ne) && ne.Timeout() {
@@ -50,14 +56,14 @@ func PollXpanseApiAndExecuteChanges() error {
 
 		if resp.JSON400 != nil {
 			logger.Logger.Error(strings.Join(resp.JSON400.Details, ", "))
-			if resp.JSON400.ResultType == xpanseclient.ParametersInvalid {
+			if resp.JSON400.ErrorType == xpanseclient.ParametersInvalid {
 				logger.Logger.Error("Exiting agent. Agent not started with valid parameters")
 				os.Exit(1)
 			}
 		}
 		if resp.JSON400 != nil {
 			logger.Logger.Error(strings.Join(resp.JSON400.Details, ", "))
-			if resp.JSON400.ResultType == xpanseclient.ParametersInvalid {
+			if resp.JSON400.ErrorType == xpanseclient.ParametersInvalid {
 				logger.Logger.Error("Exiting agent. Agent not started with valid parameters")
 				os.Exit(1)
 			}
